@@ -1,0 +1,56 @@
+replicaCount: 1
+image: ghost
+node_env: production
+url: ghost.k8s.local
+
+service:
+  type: NodePort
+  port: 80
+
+ingress:
+  enabled: true
+  ingressClass: nginx 
+
+persistence:
+  enabled: true
+  ## 是否使用 storageClass ，如果不使用则不配置
+  storageClass: "rook-ceph-block"
+  ##
+  ## 如果想使用一个存在的pvc对象，则直接传递给下面的existingClaim变量
+  # existingClaim: your-claim 
+  accessMode: ReadWriteOnce # 访问模式
+  size: 1Gi # 存储容量大小
+
+updateStrategy:
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+nodeSelector: {}
+affinity: {}
+
+image:
+  name: ghost
+  tag: latest
+  pullPolicy: IfNotPresent
+  ## 如果是私有仓库，需要指定imagePullSecrets
+  # pullSecrets:
+  # - myRegistryKeySecretName
+
+resources:
+  requests:
+    cpu: 100
+    memory: 100Mi
+  limits:
+    cpu: 200
+    memory: 200Mi
+
+startupProbe:
+  enabled: false
+
+livenessProbe:
+  enabled: false
+
+readinessProbe:
+  enabled: false
+
